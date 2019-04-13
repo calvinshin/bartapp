@@ -9,6 +9,7 @@ var app = {
     // Where the data will be stored.
     data : {},
     trains : [],
+    platforms : [],
 
     // checks whether the data can be refreshed
     isDataExamined : false,
@@ -27,15 +28,15 @@ var app = {
 
     // initiatilize the body of the app
     initialize: function() {
-        app.traindiv = document.createElement("div");
-            app.traindiv.id = "traindiv";
-
+        this.traindiv = document.createElement("div");
+            this.traindiv.id = "traindiv";
 
         document.getElementById("appwindow").append(app.traindiv, )
     },
 
-    // convert the colors provided by the system into valid colors
+    // convert the colors provided by the API call into valid colors
     colorconvert : function(color) {
+
         return(app.colors[color])
     },
 
@@ -45,18 +46,26 @@ var app = {
             url: "http://api.bart.gov/api/etd.aspx?cmd=etd&orig=" + app.location + "&key=MW9S-E7SL-26DU-VV8V&json=y",
             method: "GET"
         }).then( function(response) {
+            // Clear all the data!
             app.divClear();
             console.log(response);
             app.data = response;
             app.trains = app.data.root.station[0].etd;
             console.log(app.trains);
             app.divCreation(app.trains);
+        }, function(response)  { 
+            // This section looks to see if the AJAX call failed and then indicates that real times could not be loaded.
+            // Ideally, this would pull data from stored tables when there is no internet connetion.
+            var parentdiv = document.createElement("div");
+            parentdiv.innerText = "Real times could not be loaded. Please check your internet connection."
+            app.traindiv.append(parentdiv);
         })
     },
 
     // List of all data that should be cleaned up. 
     divClear : function() {
-        app.traindiv.innerHTML = "";
+        this.traindiv.innerHTML = "";
+        this.platforms = [];
     },
 
     // Creates the divs based on an array. 
@@ -92,6 +101,7 @@ var app = {
                     timedetails += ", ";
                 }
             }
+
             othertimediv.innerHTML = timedetails;
 
             // Create an expandable div that will have # of train details
@@ -100,31 +110,66 @@ var app = {
             expanddiv.classList = "expanddiv";
             expanddiv.innerHTML = "Number of Trains: " + data.estimate[0].length + 
                                 "<br>" +
-                                "Delay from original scheduled time: " + data.estimate[0].delay/60 + " minutes";
+                                "Delay from scheduled time: " + Math.round(data.estimate[0].delay/60) + " minute" +
+                                // Ternary operator! First use.
+                                ((Math.round(data.estimate[0].delay/60) === 1) ? "" : "s")
+
+            // Icon div for bike and other details
+            var icondiv = document.createElement("div");
+            icondiv.classList = "icondiv";
+                // check if bikes not allowed on the next train
+                if(data.estimate[0].bikeflag = 0) {
+                    // display the bike image
+                    var ban = document.createElement("i")
+                    ban.classList = "fas fa-ban nobike nobikeban"
+
+                    var bike = document.createElement("i")
+                    bike.classList = "fas fa-bicycle nobike nobikebike"
+
+                    icondiv.append(ban, bike);
+                }
 
             // Append the divs
-            parentdiv.append(destinationdiv, nexttimediv, othertimediv, expanddiv);
+                parentdiv.append(destinationdiv, nexttimediv, othertimediv, expanddiv, icondiv);
+
+            // Append the traindiv into the correct platform
+
             app.traindiv.append(parentdiv);
+        // End of for loop
         }
+        
         
         // Add listener events
         // Listener for the div to expand and show the expandable div
-        app.divCreationDiv = document.getElementsByClassName("parentdiv")
+        this.divCreationDiv = document.getElementsByClassName("parentdiv")
             for(l = 0; l < app.divCreationDiv.length; l++) {
                 app.divCreationDiv[l].onclick = function() {
-                    for(k = 0; k < app.divCreationDiv.length; k++) {
-                        app.divCreationDiv[k].classList.remove("expanded");
-                        app.divCreationDiv[k].childNodes[3].classList.remove("expanddivdisplay")
-                    }
-                    // Doesn't seem to work, the class for the object doesn't seem to have expanded...?
+                    // Check the classlist, if there's an expanded, then we remove it!
                     if(this.classList.contains("expanded")) {
                         this.classList.remove("expanded")
-                        this.childNodes[3].classList.remove("expanddivdisplay")
+                        var that = this;
+                        // For aesthetic purposes, delay the removal of the display:block css
+                        setTimeout(function() {
+                        that.childNodes[3].classList.remove("expanddivdisplay")
+                        that.childNodes[4].classList.remove("expanddivdisplay")
+                        }, 115);
                     }
+                    // If the selected div is not expanded, remove all other expansions and expand this one
                     else{
-                        console.log(this.classList)
+                        for(k = 0; k < app.divCreationDiv.length; k++) {
+                            app.divCreationDiv[k].classList.remove("expanded");
+                            var child = app.divCreationDiv[k]
+                            setTimeout(function() {
+                                child.childNodes[3].classList.remove("expanddivdisplay")
+                                child.childNodes[4].classList.remove("expanddivdisplay")
+                            }, 110);
+                        }
                         this.classList.add("expanded");
-                        this.childNodes[3].classList.add("expanddivdisplay")
+                        var that = this;
+                        setTimeout(function() {
+                            that.childNodes[3].classList.add("expanddivdisplay")
+                            that.childNodes[4].classList.add("expanddivdisplay")
+                        }, 110);
                     }
                 }
             }
@@ -132,13 +177,11 @@ var app = {
     // When start the function, certain things happen
     start : function() {
         // initialize the body of the app
-        app.initialize();
+        this.initialize();
         // determine the location
         // pull the data
-        app.datapull();
-        app.refresh = setInterval(function() {
-            app.datapull();
-        }, 30000)
+        this.datapull();
+        this.refresh = setInterval(app.datapull, 30000)
     },
 }
 

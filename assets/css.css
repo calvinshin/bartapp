@@ -1,5 +1,5 @@
 body{
-    /* background-color: yellow; */
+    /* background-color: black; */
 }
 
 #traindiv {
@@ -15,14 +15,14 @@ body{
 .destinationdiv {
     position: absolute;
     left: 10px;
-    top: 18px;
+    top: 16px;
     font-size: large;
 }
 
 .nexttimediv {
     position: absolute;
     right: 10px;
-    top: 6px;
+    top: 5px;
     font-size: x-large;
 }
 
@@ -42,10 +42,41 @@ body{
     transition: 0.5s;
 }
 
+.icondiv {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 5px;
+    text-align: left;
+    font-size: small;
+    transition: 0.5s;
+}
+
     .expanded{
         height: 120px;
     }
 
     .expanddivdisplay {
         display: block;
+        transition-delay: 0.5s;
+    }
+
+    .nobike {
+        position: absolute;
+    }
+
+    .nobikeban {
+        position: absolute;
+        right: 5px;
+        top: 3px;
+        zoom: 2.5;
+        color: red;
+        z-index: 1;
+    }
+
+    .nobikebike {
+        position: absolute;
+        right: 11px;
+        top: 7px;
+        zoom: 1.5;
     }
