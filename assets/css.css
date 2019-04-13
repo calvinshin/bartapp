@@ -1,0 +1,7 @@
+body{
+    /* background-color: yellow; */
+}
+
+.parentdiv{
+    width: calc(100% - 20px);
+}
