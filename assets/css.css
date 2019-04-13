@@ -9,28 +9,43 @@ body{
     width: calc(100% - 16px);
     position: relative;
     height: 60px;
+    transition: 0.5s;
 }
 
 .destinationdiv {
     position: absolute;
     left: 10px;
-    top: 50%;
-    transform: translate(0%, -50%);
+    top: 18px;
     font-size: large;
 }
 
 .nexttimediv {
     position: absolute;
     right: 10px;
-    top: 40%;
-    transform: translate(0%, -50%);
+    top: 6px;
     font-size: x-large;
 }
 
 .othertimediv {
     position: absolute;
     right: 10px;
-    top: 80%;
-    transform: translate(0%, -50%);
+    top: 37px;
     font-size: x-small;
 }
+
+.expanddiv {
+    display: none;
+    position: absolute;
+    top: 60px;
+    text-align: left;
+    font-size: small;
+    transition: 0.5s;
+}
+
+    .expanded{
+        height: 120px;
+    }
+
+    .expanddivdisplay {
+        display: block;
+    }

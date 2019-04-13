@@ -13,6 +13,9 @@ var app = {
     // checks whether the data can be refreshed
     isDataExamined : false,
 
+    // Active listeners
+    divCreationDiv : "",
+
     // css colors changed:
     colors : {
         RED : "#BE1B1B",
@@ -65,14 +68,17 @@ var app = {
             parentdiv.classList = "parentdiv btn mx-2 my-1 text-light";
             // set the background color of the div to a chosen list
             parentdiv.setAttribute("style", "background-color: " + app.colorconvert(data.estimate[0].color));
+
             // Create a desination div
             var destinationdiv = document.createElement("div");
             destinationdiv.classList = "destinationdiv";
             destinationdiv.innerHTML = data.destination;
+
             // Create an immediate time div (primary/secondary... maybe?)
             var nexttimediv = document.createElement("div");
             nexttimediv.classList = "nexttimediv";
             nexttimediv.innerHTML = data.estimate[0].minutes;
+
             // Create a secondary time div for other expected times
             var othertimediv = document.createElement("div");
             othertimediv.classList = "othertimediv";
@@ -88,17 +94,40 @@ var app = {
             }
             othertimediv.innerHTML = timedetails;
 
-            // Create an alert if value of delay <10 minutes (600 seconds);
-
-
             // Create an expandable div that will have # of train details
                 // https://codepen.io/peternguyen/pen/hICga
-            // Append the divs
-            parentdiv.append(destinationdiv, nexttimediv, othertimediv);
-            app.traindiv.append(parentdiv);
+            var expanddiv = document.createElement("div");
+            expanddiv.classList = "expanddiv";
+            expanddiv.innerHTML = "Number of Trains: " + data.estimate[0].length + 
+                                "<br>" +
+                                "Delay from original scheduled time: " + data.estimate[0].delay/60 + " minutes";
 
-            app.colorconvert(data.estimate[0].color)
+            // Append the divs
+            parentdiv.append(destinationdiv, nexttimediv, othertimediv, expanddiv);
+            app.traindiv.append(parentdiv);
         }
+        
+        // Add listener events
+        // Listener for the div to expand and show the expandable div
+        app.divCreationDiv = document.getElementsByClassName("parentdiv")
+            for(l = 0; l < app.divCreationDiv.length; l++) {
+                app.divCreationDiv[l].onclick = function() {
+                    for(k = 0; k < app.divCreationDiv.length; k++) {
+                        app.divCreationDiv[k].classList.remove("expanded");
+                        app.divCreationDiv[k].childNodes[3].classList.remove("expanddivdisplay")
+                    }
+                    // Doesn't seem to work, the class for the object doesn't seem to have expanded...?
+                    if(this.classList.contains("expanded")) {
+                        this.classList.remove("expanded")
+                        this.childNodes[3].classList.remove("expanddivdisplay")
+                    }
+                    else{
+                        console.log(this.classList)
+                        this.classList.add("expanded");
+                        this.childNodes[3].classList.add("expanddivdisplay")
+                    }
+                }
+            }
     },
     // When start the function, certain things happen
     start : function() {
