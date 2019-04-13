@@ -2,6 +2,35 @@ body{
     /* background-color: yellow; */
 }
 
+#traindiv {
+}
+
 .parentdiv{
-    width: calc(100% - 20px);
+    width: calc(100% - 16px);
+    position: relative;
+    height: 60px;
+}
+
+.destinationdiv {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translate(0%, -50%);
+    font-size: large;
+}
+
+.nexttimediv {
+    position: absolute;
+    right: 10px;
+    top: 40%;
+    transform: translate(0%, -50%);
+    font-size: x-large;
+}
+
+.othertimediv {
+    position: absolute;
+    right: 10px;
+    top: 80%;
+    transform: translate(0%, -50%);
+    font-size: x-small;
 }

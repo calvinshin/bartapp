@@ -74,11 +74,27 @@ var app = {
             nexttimediv.classList = "nexttimediv";
             nexttimediv.innerHTML = data.estimate[0].minutes;
             // Create a secondary time div for other expected times
+            var othertimediv = document.createElement("div");
+            othertimediv.classList = "othertimediv";
+            var timedetails = ""
+            for (j = 1; j < data.estimate.length; j++) {
+                timedetails += data.estimate[j].minutes
+                if(j + 1 === data.estimate.length) {
+                    // nothing happens
+                }
+                else{
+                    timedetails += ", ";
+                }
+            }
+            othertimediv.innerHTML = timedetails;
+
+            // Create an alert if value of delay <10 minutes (600 seconds);
+
 
             // Create an expandable div that will have # of train details
                 // https://codepen.io/peternguyen/pen/hICga
             // Append the divs
-            parentdiv.append(destinationdiv, nexttimediv);
+            parentdiv.append(destinationdiv, nexttimediv, othertimediv);
             app.traindiv.append(parentdiv);
 
             app.colorconvert(data.estimate[0].color)
