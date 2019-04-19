@@ -17,6 +17,9 @@ body{
     left: 10px;
     top: 16px;
     font-size: large;
+    width: calc(100vw - 80px);
+    overflow: auto;
+    text-align: left;
 }
 
 .nexttimediv {
@@ -37,6 +40,8 @@ body{
     display: none;
     position: absolute;
     top: 60px;
+    width: calc(100vw - 80px);
+    overflow: auto;
     text-align: left;
     font-size: small;
     transition: 0.5s;
@@ -80,3 +85,4 @@ body{
         top: 7px;
         zoom: 1.5;
     }
+
