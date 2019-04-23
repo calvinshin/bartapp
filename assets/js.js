@@ -573,11 +573,11 @@ var app = {
   },
 
   // AJAX pull of the data. Currently uses a public key.
-  datapull: function() {
+  realtimePull: function(station) {
     $.ajax({
       url:
         "http://api.bart.gov/api/etd.aspx?cmd=etd&orig=" +
-        app.location +
+        station +
         "&key=MW9S-E7SL-26DU-VV8V&json=y",
       method: "GET"
     }).then(
@@ -728,38 +728,79 @@ var app = {
   start: function() {
     // initialize the body of the app
     this.initialize();
-    // determine the location
-    // pull the data
-    this.datapull();
-    this.refresh = setInterval(app.datapull, 30000);
 
     // tests for location request
     this.locationRequest();
-    this.locationpull();
+
+
+    this.refresh = setInterval(app.realtimePull(app.location), 30000);
+
+    //   LocationRequest, LocationPull, closestStation, then realtimePull    
   },
 
   // pulls the location via the location API
-  locationpull: function() {
+  locationPull: function() {
     $.ajax({
       url:
         "http://api.bart.gov/api/stn.aspx?cmd=stns&key=MW9S-E7SL-26DU-VV8V&json=y",
       method: "GET"
     }).then(function(response) {
-      console.log("successful pull of locations");
       app.stations = response.root.stations.station;
-      console.log(app.stations);
+      app.closestStationFinder();
+    }, function() {
+        app.closestStationFinder();
     });
   },
 
+//   LocationRequest, LocationPull, closestStation, then realtimePull
   locationRequest: function() {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      app.x = position.coords.latitude;
-      app.y = position.coords.longitude;
-      console.log(app.x);
-      console.log(app.y);
-    });
+    navigator.geolocation.getCurrentPosition(
+        // captures position if provided
+        function(position) {
+            app.x = position.coords.latitude;
+            app.y = position.coords.longitude;
+            app.locationPull();
+        }, 
+        // defaults to Montgomery if not returned
+        function() {
+            app.x = "37.789405";
+            app.y = "-122.401066";
+            app.locationPull();
+        }
+    );
+  },
+
+  distance: function(x1, x2, y1, y2) {
+    var conv = Math.PI / 180
+    var radx1 = conv * x1;
+    var rady1 = conv * y1;
+    var theta = x2 - y2;
+    var radtheta = conv * theta;
+    var dist = Math.sin(radx1) * Math.sin(rady1) + Math.cos(radx1) * Math.cos(rady1) * Math.cos(radtheta);
+    dist = Math.acos(dist) / conv * 60 * 1.1515;
+    return dist;
+  },
+
+  closestStationFinder : function() {
+    console.log(app.x);
+    console.log(app.y);
+    // set a variable for the closest station
+
+    for(i = 0; i < this.stations; i++) {
+        // iterate nearest neighbor search doing linear search
+
+        // if the distance of this item is closer than the current closest station, replace closest station
+
+        // if not, move to the next one
+
+        // 
+    }
+    this.realtimePull(this.location);
   }
 };
 
-
 app.start();
+
+
+console.log(app.distance(100,100,100,101));
+console.log(app.distance(100,100,100,100))
