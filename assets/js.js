@@ -12,7 +12,6 @@ var app = {
   platforms: [],
 //   static pull of stations from 19 April 2019
   stations: [
-    [
       {
         name: "12th St. Oakland City Center",
         abbr: "12TH",
@@ -541,7 +540,6 @@ var app = {
         state: "CA",
         zipcode: "94607"
       }
-    ]
   ],
 
   // checks whether the data can be refreshed
@@ -561,10 +559,30 @@ var app = {
 
   // initiatilize the body of the app
   initialize: function() {
+
+
+    this.headerdiv = document.createElement("div");
+    this.headerdiv.id = "headerdiv";
+    document.getElementById("appwindow").append(this.headerdiv);
+
+
+    // create the locationdiv where the current location is identified
+    this.locationdiv = document.createElement("select");
+    this.locationdiv.id = "locationdiv";
+    this.locationdiv.classList.add("form-control")
+    this.headerdiv.append(this.locationdiv);
+
+    for(var i = 0; i < this.stations.length; i++) {
+      var option = document.createElement("option");
+      option.innerText = this.stations[i].name;
+      option.id = "station" + this.stations[i].abbr;
+      this.locationdiv.append(option);
+    }
+
+    // create the traindiv where all train data is going into
     this.traindiv = document.createElement("div");
     this.traindiv.id = "traindiv";
-
-    document.getElementById("appwindow").append(app.traindiv);
+    document.getElementById("appwindow").append(this.traindiv);
   },
 
   // convert the colors provided by the API call into valid colors
@@ -587,7 +605,6 @@ var app = {
         console.log(response);
         app.data = response;
         app.trains = app.data.root.station[0].etd;
-        console.log(app.trains);
         app.divCreation(app.trains);
       },
       function(response) {
@@ -782,25 +799,23 @@ var app = {
   },
 
   closestStationFinder : function() {
-    console.log(app.x);
-    console.log(app.y);
     // set a variable for the closest station
+    var closestDistance = 90000;
 
-    for(i = 0; i < this.stations; i++) {
+    for(var i = 0; i < this.stations.length; i++) {
         // iterate nearest neighbor search doing linear search
-
+        var linearDistance = this.distance(this.x, this.y, this.stations[i].gtfs_latitude, this.stations[i].gtfs_longitude)
         // if the distance of this item is closer than the current closest station, replace closest station
-
-        // if not, move to the next one
-
-        // 
+        if(closestDistance > linearDistance) {
+          this.location = this.stations[i].abbr;
+          closestDistance = linearDistance;
+        }
     }
+
+    document.getElementById("station" + this.location).setAttribute("selected", "selected");
+
     this.realtimePull(this.location);
   }
 };
 
 app.start();
-
-
-console.log(app.distance(100,100,100,101));
-console.log(app.distance(100,100,100,100))
