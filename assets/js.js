@@ -547,37 +547,21 @@ var app = {
 
   // Active listeners
   divCreationDiv: "",
+  stationListener: "",
 
   // css colors changed:
   colors: {
     RED: "#BE1B1B",
     BLUE: "#1B4299",
-    YELLOW: "#DABE22",
+    YELLOW: "#D1B621",
     GREEN: "#1C9F14",
     PURPLE: "#A2127D"
   },
 
   // initiatilize the body of the app
   initialize: function() {
-
-
-    this.headerdiv = document.createElement("div");
-    this.headerdiv.id = "headerdiv";
-    document.getElementById("appwindow").append(this.headerdiv);
-
-
-    // create the locationdiv where the current location is identified
-    this.locationdiv = document.createElement("select");
-    this.locationdiv.id = "locationdiv";
-    this.locationdiv.classList.add("form-control")
-    this.headerdiv.append(this.locationdiv);
-
-    for(var i = 0; i < this.stations.length; i++) {
-      var option = document.createElement("option");
-      option.innerText = this.stations[i].name;
-      option.id = "station" + this.stations[i].abbr;
-      this.locationdiv.append(option);
-    }
+    // Creates a header
+    this.headerCreation();
 
     // create the traindiv where all train data is going into
     this.traindiv = document.createElement("div");
@@ -605,7 +589,11 @@ var app = {
         console.log(response);
         app.data = response;
         app.trains = app.data.root.station[0].etd;
+        // Create the divs
         app.divCreation(app.trains);
+
+        // Create listeners for the station;
+        app.stationListenerCreator();
       },
       function(response) {
         // This section looks to see if the AJAX call failed and then indicates that real times could not be loaded.
@@ -616,6 +604,28 @@ var app = {
         app.traindiv.append(parentdiv);
       }
     );
+  },
+
+  headerCreation : function() {
+    this.headerdiv = document.createElement("div");
+    this.headerdiv.id = "headerdiv";
+    document.getElementById("appwindow").append(this.headerdiv);
+
+    // create the locationdiv where the current location is identified
+    this.locationdiv = document.createElement("select");
+    this.locationdiv.id = "locationdiv";
+    // this.locationdiv.classList.add("form-control")
+    this.headerdiv.append(this.locationdiv);
+
+    // Create each of the options in the dropdown selection
+    for(var i = 0; i < this.stations.length; i++) {
+      var option = document.createElement("option");
+      option.innerText = this.stations[i].name;
+      option.id = "station" + this.stations[i].abbr;
+      option.setAttribute("abbr", this.stations[i].abbr);
+      option.classList.add("realtimeOption");
+      this.locationdiv.append(option);
+    }
   },
 
   // List of all data that should be cleaned up.
@@ -749,7 +759,6 @@ var app = {
     // tests for location request
     this.locationRequest();
 
-
     this.refresh = setInterval(app.realtimePull(app.location), 30000);
 
     //   LocationRequest, LocationPull, closestStation, then realtimePull    
@@ -815,7 +824,23 @@ var app = {
     document.getElementById("station" + this.location).setAttribute("selected", "selected");
 
     this.realtimePull(this.location);
-  }
+  },
+
+  stationListenerCreator : function() {
+    var options = document.getElementById("locationdiv");
+
+    stationFunction = function() {
+      console.log(this.value);
+      console.log(this.selectedIndex)
+      console.log(this.options[this.selectedIndex].getAttribute("abbr"));
+    }
+
+    options.removeEventListener("change", stationFunction);
+
+    // this.stationListener.removeEventListener("change");
+    options.addEventListener("change", stationFunction);
+
+  },
 };
 
 app.start();
