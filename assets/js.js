@@ -555,7 +555,8 @@ var app = {
     BLUE: "#1B4299",
     YELLOW: "#D1B621",
     GREEN: "#1C9F14",
-    PURPLE: "#A2127D"
+    PURPLE: "#A2127D",
+    WHITE: "#808080"
   },
 
   // initiatilize the body of the app
@@ -759,7 +760,7 @@ var app = {
     // tests for location request
     this.locationRequest();
 
-    this.refresh = setInterval(app.realtimePull(app.location), 30000);
+    // this.refresh = setInterval(app.realtimePull(app.location), 5000);
 
     //   LocationRequest, LocationPull, closestStation, then realtimePull    
   },
@@ -823,24 +824,42 @@ var app = {
 
     document.getElementById("station" + this.location).setAttribute("selected", "selected");
 
-    this.realtimePull(this.location);
+    app.realtimePull(app.location);
+
+    this.refresh = setInterval(function() {
+      app.realtimePull(app.location)}
+      , 10000);
+    // this.realtimePull(this.location);
   },
+
+  
+stationFunction : function() {
+  this.location = this.options[this.selectedIndex].getAttribute("abbr")
+
+  this.refresh = clearInterval();
+  this.refresh = setInterval(function() {
+    app.realtimePull(app.location)}
+    , 10000);
+    
+  console.log(this.value);
+  console.log(this.selectedIndex)
+  console.log(this.options[this.selectedIndex].getAttribute("abbr"));
+},
 
   stationListenerCreator : function() {
     var options = document.getElementById("locationdiv");
 
-    stationFunction = function() {
-      console.log(this.value);
-      console.log(this.selectedIndex)
-      console.log(this.options[this.selectedIndex].getAttribute("abbr"));
-    }
-
-    options.removeEventListener("change", stationFunction);
+    // potentially redundant step; left to ensure that the listener only happens once;
+    options.removeEventListener("change", app.stationFunction);
 
     // this.stationListener.removeEventListener("change");
-    options.addEventListener("change", stationFunction);
+    options.addEventListener("change", app.stationFunction);
 
   },
 };
 
 app.start();
+
+setInterval(function() {
+  console.log("interval")
+}, 5000)
