@@ -610,11 +610,13 @@ var app = {
   headerCreation : function() {
     this.headerdiv = document.createElement("div");
     this.headerdiv.id = "headerdiv";
+    this.headerdiv.classList = "";
     document.getElementById("appwindow").append(this.headerdiv);
 
     // create the locationdiv where the current location is identified
     this.locationdiv = document.createElement("select");
     this.locationdiv.id = "locationdiv";
+    this.locationdiv.classList = "btn btn-light dropdown-toggle"
     // this.locationdiv.classList.add("form-control")
     this.headerdiv.append(this.locationdiv);
 
@@ -711,9 +713,29 @@ var app = {
         icondiv
       );
 
+
+      // Check the list of platforms
+        // data.estimate[0].platform
+      if(app.platforms.indexOf(data.estimate[0].platform) === -1) {
+        var platformNumber = data.estimate[0].platform
+        app.platforms.push(platformNumber)
+      // If there is no platform that exists, create a new div for the platform
+        var platformDiv = document.createElement("div");
+        platformDiv.id = "platform" + platformNumber
+        platformDiv.innerHTML = "<h5 class='platformDiv'>Platform " + platformNumber + "</h5>"
+        app.traindiv.append(platformDiv);
+
+        document.getElementById("platform" + platformNumber).append(parentdiv);
+        console.log(data);
+      }
+      // If the platform exists, insert it into that platform.
+      else{
+        var platformNumber = data.estimate[0].platform
+        document.getElementById("platform" + platformNumber).append(parentdiv);
+      }
       // Append the traindiv into the correct platform
 
-      app.traindiv.append(parentdiv);
+      // app.traindiv.append(parentdiv);
       // End of for loop
     }
 
