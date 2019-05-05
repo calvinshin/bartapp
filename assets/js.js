@@ -560,6 +560,8 @@ var app = {
     ORANGE: "#be5111",
   },
 
+  colorOrder: ["RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "PURPLE", "WHITE"],
+
   // initiatilize the body of the app
   initialize: function() {
     // Creates a header
@@ -647,11 +649,12 @@ var app = {
     for (i = 0; i < array.length; i++) {
       var data = array[i];
       var parentdiv = document.createElement("div");
-      parentdiv.classList = "parentdiv btn mx-2 my-1 text-light";
+      parentdiv.classList = "parentdiv btn mx-2 my-1 divTextColor text-light";
       // set the background color of the div to a chosen list
       parentdiv.setAttribute(
         "style",
-        "background-color: " + app.colorconvert(data.estimate[0].color)
+        "background-color: " + app.colorconvert(data.estimate[0].color) + ";" + 
+        "order : " + this.colorOrder.indexOf(data.estimate[0].color)
       );
 
       // Create a desination div
@@ -725,9 +728,10 @@ var app = {
         app.platforms.push(platformNumber)
       // If there is no platform that exists, create a new div for the platform
         var platformDiv = document.createElement("div");
-        platformDiv.id = "platform" + platformNumber
+        platformDiv.id = "platform" + platformNumber;
+        platformDiv.classList = "platformContainerDiv"
         platformDiv.innerHTML = "<h5 class='platformDiv'>Platform " + platformNumber + "</h5>"
-        platformDiv.setAttribute("order", parseInt(platformNumber));
+        platformDiv.style.setProperty("order", platformNumber);
         app.traindiv.append(platformDiv);
 
         document.getElementById("platform" + platformNumber).append(parentdiv);
