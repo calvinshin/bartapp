@@ -3,19 +3,26 @@
 body{
     /* background-color: black; */
     /* color: black !important; */
-};
+}
 
-.divTextColor {
-    color: #f0f0f0 !important;
+.testcolorthing {
+    color: #f0f0f0;
 }
 
 #headerdiv {
     margin: 5px;
+    position: relative;
 }
 
     #locationdiv {
         font-size: smaller;
         width: 200px;
+    }
+
+    #refreshIcon {
+        position: absolute;
+        right: 10px;
+        top: 8px;
     }
 
 #traindiv {

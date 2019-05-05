@@ -549,16 +549,41 @@ var app = {
   divCreationDiv: "",
   stationListener: "",
 
-  // css colors changed:
-  colors: {
-    RED: "#BE1B1B",
-    BLUE: "#1B4299",
-    YELLOW: "#D1B621",
-    GREEN: "#1C9F14",
-    PURPLE: "#A2127D",
-    WHITE: "#808080",
-    ORANGE: "#be5111",
+  colorOptions : {
+    standard : {
+      RED: "#BE1B1B",
+      BLUE: "#1B4299",
+      YELLOW: "#D1B621",
+      GREEN: "#1C9F14",
+      PURPLE: "#A2127D",
+      WHITE: "#808080",
+      ORANGE: "#be5111",
+      fontColor: "white",
+    },
+    vaporwave : {
+      RED: "#ed7b95",
+      BLUE: "#7baeed",
+      YELLOW: "#ede25c",
+      GREEN: "#8ae57e",
+      PURPLE: "#e893ed",
+      WHITE: "#808080",
+      ORANGE: "#eaae70",
+      fontColor: "black",
+    },
+    monochrome : {
+      RED: "#a0a0a0",
+      BLUE: "#424242",
+      YELLOW: "#757575",
+      GREEN: "#636363",
+      PURPLE: "#303030",
+      WHITE: "#1c1c1c",
+      ORANGE: "#8c8c8c",
+      fontColor: "black",
+    }
   },
+
+  // css colors changed:
+  colors: {},
 
   colorOrder: ["RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "PURPLE", "WHITE"],
 
@@ -588,7 +613,16 @@ var app = {
         "http://api.bart.gov/api/etd.aspx?cmd=etd&orig=" +
         station +
         "&key=MW9S-E7SL-26DU-VV8V&json=y",
-      method: "GET"
+      method: "GET",
+      // before sending, do a refresh image rotating
+      // This does not work as it stands; issue with ordering of all the functions as they stand.
+      beforeSend: function() {
+        var refresh = document.createElement("i");
+        refresh.classList = "fas fa-sync fa-spin";
+        console.log("This refresh is showing");
+        console.log(app.traindiv);
+        // app.traindiv.append(refresh)
+      }
     }).then(
       function(response) {
         // Clear all the data!
@@ -605,6 +639,7 @@ var app = {
       function(response) {
         // This section looks to see if the AJAX call failed and then indicates that real times could not be loaded.
         // Ideally, this would pull data from stored tables when there is no internet connetion.
+        app.traindiv.innerHTML("");
         var parentdiv = document.createElement("div");
         parentdiv.innerText =
           "Real times could not be loaded. Please check your internet connection.";
@@ -635,6 +670,15 @@ var app = {
       option.classList.add("realtimeOption");
       this.locationdiv.append(option);
     }
+
+    // Create the refresh button
+    var refreshIcon = document.createElement("i");
+    refreshIcon.classList = "fas fa-sync icon";
+    refreshIcon.id = "refreshIcon";
+    this.headerdiv.append(refreshIcon);
+
+    // Create the refresh listener
+    this.refreshListener();
   },
 
   // List of all data that should be cleaned up.
@@ -649,7 +693,7 @@ var app = {
     for (i = 0; i < array.length; i++) {
       var data = array[i];
       var parentdiv = document.createElement("div");
-      parentdiv.classList = "parentdiv btn mx-2 my-1 divTextColor text-light";
+      parentdiv.classList = "parentdiv btn mx-2 my-1 text-light";
       // set the background color of the div to a chosen list
       parentdiv.setAttribute(
         "style",
@@ -752,7 +796,8 @@ var app = {
     // Add listener events
     // Listener for the div to expand and show the expandable div
     this.divCreationDiv = document.getElementsByClassName("parentdiv");
-    for (l = 0; l < app.divCreationDiv.length; l++) {
+    for (var l = 0; l < app.divCreationDiv.length; l++) {
+      app.divCreationDiv[l].removeAttribute("onclick");
       app.divCreationDiv[l].onclick = function() {
         // Check the classlist, if there's an expanded, then we remove it!
         if (this.classList.contains("expanded")) {
@@ -766,7 +811,7 @@ var app = {
         }
         // If the selected div is not expanded, remove all other expansions and expand this one
         else {
-          for (k = 0; k < app.divCreationDiv.length; k++) {
+          for (var k = 0; k < app.divCreationDiv.length; k++) {
             app.divCreationDiv[k].classList.remove("expanded");
             var child = app.divCreationDiv[k];
             setTimeout(function() {
@@ -786,6 +831,8 @@ var app = {
   },
   // When start the function, certain things happen
   start: function() {
+    this.colors = this.colorOptions.standard;
+
     // initialize the body of the app
     this.initialize();
 
@@ -856,8 +903,6 @@ var app = {
 
     document.getElementById("station" + this.location).setAttribute("selected", "selected");
 
-    app.realtimePull(app.location);
-
     this.refresh = setInterval(function() {
       app.realtimePull(app.location)}
       , 90000000);
@@ -889,10 +934,22 @@ stationFunction : function() {
     options.addEventListener("change", app.stationFunction);
 
   },
+
+  refreshListener : function() {
+    var refresh = document.getElementById("refreshIcon");
+
+    // turn off the listener
+    refresh.removeEventListener("click", app.realtimePull(app.location));
+  
+    // refresh the listener 
+    refresh.addEventListener("click", function() {
+      app.realtimePull(app.location);
+    });
+  }
 };
 
 app.start();
 
 setInterval(function() {
   console.log("interval")
-}, 5000)
+}, 15000)
