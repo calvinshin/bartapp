@@ -556,7 +556,8 @@ var app = {
     YELLOW: "#D1B621",
     GREEN: "#1C9F14",
     PURPLE: "#A2127D",
-    WHITE: "#808080"
+    WHITE: "#808080",
+    ORANGE: "#be5111",
   },
 
   // initiatilize the body of the app
@@ -572,6 +573,9 @@ var app = {
 
   // convert the colors provided by the API call into valid colors
   colorconvert: function(color) {
+    if(typeof app.colors[color] === "undefined") {
+      return "#000000"
+    }
     return app.colors[color];
   },
 
@@ -658,7 +662,7 @@ var app = {
       // Create an immediate time div (primary/secondary... maybe?)
       var nexttimediv = document.createElement("div");
       nexttimediv.classList = "nexttimediv";
-      nexttimediv.innerHTML = data.estimate[0].minutes;
+      nexttimediv.innerHTML = data.estimate[0].minutes + (data.estimate[0].minutes === "Leaving" ? "" : "<section class='smallMin'> min</section>");
 
       // Create a secondary time div for other expected times
       var othertimediv = document.createElement("div");
@@ -723,10 +727,12 @@ var app = {
         var platformDiv = document.createElement("div");
         platformDiv.id = "platform" + platformNumber
         platformDiv.innerHTML = "<h5 class='platformDiv'>Platform " + platformNumber + "</h5>"
+        platformDiv.setAttribute("order", parseInt(platformNumber));
         app.traindiv.append(platformDiv);
 
         document.getElementById("platform" + platformNumber).append(parentdiv);
-        console.log(data);
+
+        // reorder the traindivs
       }
       // If the platform exists, insert it into that platform.
       else{
@@ -850,22 +856,23 @@ var app = {
 
     this.refresh = setInterval(function() {
       app.realtimePull(app.location)}
-      , 10000);
+      , 90000000);
     // this.realtimePull(this.location);
   },
 
   
 stationFunction : function() {
-  this.location = this.options[this.selectedIndex].getAttribute("abbr")
+  app.location = this.options[this.selectedIndex].getAttribute("abbr")
+  app.realtimePull(app.location);
 
-  this.refresh = clearInterval();
-  this.refresh = setInterval(function() {
+
+  app.refresh = clearInterval();
+  app.refresh = setInterval(function() {
     app.realtimePull(app.location)}
-    , 10000);
+    , 90000);
     
-  console.log(this.value);
-  console.log(this.selectedIndex)
-  console.log(this.options[this.selectedIndex].getAttribute("abbr"));
+    // Testing to see if the app.station should be kept separate than the app.location
+  this.station = this.options[this.selectedIndex].getAttribute("abbr");
 },
 
   stationListenerCreator : function() {

@@ -27,6 +27,7 @@ body{
     right: 10px;
     top: 5px;
     font-size: x-large;
+    display: inline-block;
 }
 
 .othertimediv {
@@ -89,4 +90,19 @@ body{
 
     .platformDiv {
         margin: 10px;
+        font-size: smaller;
     }
+
+    .smallMin {
+        font-size: x-small;
+        display: inline;
+    }
+
+    #locationdiv {
+        font-size: smaller;
+        width: 200px;
+    }
+/*     
+    .test{
+    color: #be5111
+} */
