@@ -557,7 +557,7 @@ var app = {
       GREEN: "#1C9F14",
       PURPLE: "#A2127D",
       WHITE: "#808080",
-      ORANGE: "#be5111",
+      ORANGE: "#cc620c",
       fontColor: "white",
     },
     vaporwave : {
@@ -814,10 +814,11 @@ var app = {
           for (var k = 0; k < app.divCreationDiv.length; k++) {
             app.divCreationDiv[k].classList.remove("expanded");
             var child = app.divCreationDiv[k];
-            setTimeout(function() {
+            // Having this function causes the system to break
+            // setTimeout(function() {
               child.childNodes[3].classList.remove("expanddivdisplay");
               child.childNodes[4].classList.remove("expanddivdisplay");
-            }, 110);
+            // }, 110);
           }
           this.classList.add("expanded");
           var that = this;
