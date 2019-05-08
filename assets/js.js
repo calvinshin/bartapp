@@ -616,13 +616,11 @@ var app = {
       method: "GET",
       // before sending, do a refresh image rotating
       // This does not work as it stands; issue with ordering of all the functions as they stand.
-      beforeSend: function() {
-        var refresh = document.createElement("i");
-        refresh.classList = "fas fa-sync fa-spin";
-        console.log("This refresh is showing");
-        console.log(app.traindiv);
-        // app.traindiv.append(refresh)
-      }
+      // beforeSend: function() {
+      //   var refresh = document.createElement("i");
+      //   refresh.classList = "fas fa-sync fa-spin";
+      //   // app.traindiv.append(refresh)
+      // }
     }).then(
       function(response) {
         // Clear all the data!
@@ -731,10 +729,10 @@ var app = {
       var expanddiv = document.createElement("div");
       expanddiv.classList = "expanddiv";
       expanddiv.innerHTML =
-        "Number of Trains: " +
+        "Number of trains: " +
         data.estimate[0].length +
         "<br>" +
-        "Delay from scheduled time: " +
+        "Delayed by " +
         Math.round(data.estimate[0].delay / 60) +
         " minute" +
         // Ternary operator! First use.
@@ -825,7 +823,7 @@ var app = {
           setTimeout(function() {
             that.childNodes[3].classList.add("expanddivdisplay");
             that.childNodes[4].classList.add("expanddivdisplay");
-          }, 110);
+          }, 160);
         }
       };
     }
