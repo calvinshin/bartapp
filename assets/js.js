@@ -696,7 +696,7 @@ var app = {
       parentdiv.setAttribute(
         "style",
         "background-color: " + app.colorconvert(data.estimate[0].color) + ";" + 
-        "order : " + this.colorOrder.indexOf(data.estimate[0].color)
+        "order : " + parseInt(parseInt(this.colorOrder.indexOf(data.estimate[0].color) * 100) + (data.estimate[0].minutes === "Leaving" ? parseInt(0) : parseInt(data.estimate[0].minutes)))
       );
 
       // Create a desination div
@@ -851,9 +851,9 @@ var app = {
       method: "GET"
     }).then(function(response) {
       app.stations = response.root.stations.station;
-      app.closestStationFinder();
+      app.realtimePull(app.closestStationFinder());
     }, function() {
-        app.closestStationFinder();
+      app.realtimePull(app.closestStationFinder());
     });
   },
 
@@ -906,6 +906,9 @@ var app = {
       app.realtimePull(app.location)}
       , 90000000);
     // this.realtimePull(this.location);
+    console.log(app.location);
+
+    return app.location
   },
 
   
@@ -938,12 +941,10 @@ stationFunction : function() {
     var refresh = document.getElementById("refreshIcon");
 
     // turn off the listener
-    refresh.removeEventListener("click", app.realtimePull(app.location));
+    refresh.removeEventListener("click", function() {app.realtimePull(app.location)});
   
     // refresh the listener 
-    refresh.addEventListener("click", function() {
-      app.realtimePull(app.location);
-    });
+    refresh.addEventListener("click", function() {app.realtimePull(app.location)});
   }
 };
 
